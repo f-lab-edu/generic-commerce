@@ -10,3 +10,13 @@
 - Gradle 8.14
 - MySQL 8.0
 - JPA (Hibernate 6.6)
+
+## Preferences
+
+### Git Hook
+
+Commit 시 자동으로 lint check 하기 위해 Git hook을 설정해야 합니다. 터미널에서 다음 명령어를 실행하세요:
+
+```bash
+git config core.hooksPath .githooks
+```
