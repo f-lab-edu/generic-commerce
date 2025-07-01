@@ -1,0 +1,26 @@
+%% 상품 도메인 ERD - 커머스 플랫폼의 핵심 상품 관리 구조
+erDiagram
+    Product {
+    %% 판매할 상품의 기본 정보를 담는 메인 엔티티
+    }
+    ProductImage {
+    %% 상품의 썸네일, 갤러리, 상세 이미지들을 관리
+    }
+    ProductOption {
+    %% 상품의 옵션 그룹 (색상, 사이즈, 재질 등)
+    }
+    ProductOptionElement {
+    %% 각 옵션의 구체적인 값들 (빨강, 파랑, XL, L 등)
+    }
+    ProductItem {
+    %% 실제 판매되는 아이템 (빨강-XL, 파랑-L 등의 조합)
+    }
+    ProductItemOptionElement {
+    %% 아이템이 어떤 옵션 조합인지 정의하는 매핑 테이블
+    }
+    Product ||--o{ ProductImage: "상품 - 이미지 (1:N)"
+    Product ||--o{ ProductOption: "상품 - 옵션 (1:N)"
+    Product ||--o{ ProductItem: "상품 - 아이템 (1:N)"
+    ProductOption ||--o{ ProductOptionElement: "옵션 - 옵션 값 (1:N)"
+    ProductItem ||--o{ ProductItemOptionElement: "아이템 - 옵션 값 (1:N)"
+    ProductOptionElement ||--o{ ProductItemOptionElement: "옵션 값 - 아이템 (1:N)"
