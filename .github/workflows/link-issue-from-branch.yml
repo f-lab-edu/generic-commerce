@@ -53,3 +53,13 @@ jobs:
             echo "No issue number found in branch name. Skipping."
             exit 0
           fi
+
+      # 🔷 PR에 코멘트 남기기
+      - name: Comment on PR with issue link
+        if: env.issue_number != ''
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ env.pr_number }}
+          body: |
+            Closes: #${{ env.issue_number }}
