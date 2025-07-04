@@ -27,4 +27,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Related to: #${{ env.issue_number }}
+            Closes: #${{ env.issue_number }}
