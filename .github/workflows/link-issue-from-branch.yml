@@ -1,7 +1,7 @@
 name: Link Issue From Branch Name
 
 on:
-  # 자동 실행 (PR 열릴 때)
+  # PR 열릴 때 자동 실행
   pull_request:
     types: [opened]
 
@@ -17,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ 레포를 체크아웃해서 .git 디렉토리 확보
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # PR 번호 설정
       - name: Set PR number
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
@@ -25,6 +30,7 @@ jobs:
             echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           fi
 
+      # PR 브랜치명 가져오기
       - name: Get PR branch name
         id: get-branch
         run: |
@@ -35,6 +41,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # 브랜치명에서 이슈 번호 추출
       - name: Extract issue number from branch name
         id: extract
         run: |
@@ -43,15 +50,4 @@ jobs:
             echo "issue_number=${BASH_REMATCH[1]}" >> $GITHUB_ENV
             echo "Found issue number: ${BASH_REMATCH[1]}"
           else
-            echo "No issue number found in branch name. Skipping."
-            exit 0
-          fi
-
-      - name: Comment on PR with issue link
-        if: env.issue_number != ''
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ env.pr_number }}
-          body: |
-            Closes: #${{ env.issue_number }}
+            echo "No issue number found in branch na
