@@ -6,7 +6,11 @@ import jakarta.persistence.Embeddable
 data class Email(
     val value: String,
 ) {
+    companion object {
+        private val EMAIL_REGEX = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+    }
+
     init {
-        require(value.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))) { "Invalid email format" }
+        require(value.matches(EMAIL_REGEX)) { "Invalid email format: $value" }
     }
 }

@@ -6,7 +6,11 @@ import jakarta.persistence.Embeddable
 data class PhoneNumber(
     val value: String,
 ) {
+    companion object {
+        private val PHONE_NUMBER_REGEX = Regex("^01[016789]-\\d{3,4}-\\d{4}$")
+    }
+
     init {
-        require(value.matches(Regex("^01[016789]-\\d{3,4}-\\d{4}$"))) { "Invalid phone number format" }
+        require(value.matches(PHONE_NUMBER_REGEX)) { "Invalid phone number format: $value" }
     }
 }
