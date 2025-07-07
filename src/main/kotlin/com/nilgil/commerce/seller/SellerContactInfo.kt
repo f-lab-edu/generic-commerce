@@ -2,14 +2,13 @@ package com.nilgil.commerce.seller
 
 import com.nilgil.commerce.common.Email
 import com.nilgil.commerce.common.PhoneNumber
-import jakarta.persistence.AttributeOverride
-import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
+import jakarta.persistence.Embedded
 
 @Embeddable
 data class SellerContactInfo(
-    @AttributeOverride(name = "value", column = Column(name = "email"))
+    @Embedded
     val email: Email,
-    @AttributeOverride(name = "value", column = Column(name = "phone_number"))
+    @Embedded
     val phoneNumber: PhoneNumber,
 )

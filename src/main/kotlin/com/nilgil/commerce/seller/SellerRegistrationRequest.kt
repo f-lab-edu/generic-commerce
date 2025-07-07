@@ -1,14 +1,18 @@
 package com.nilgil.commerce.seller
 
 import com.nilgil.commerce.common.BaseEntity
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
 @Entity
 class SellerRegistrationRequest(
+    @Embedded
     val businessInfo: SellerBusinessInfo,
+    @Embedded
     val contactInfo: SellerContactInfo,
+    @Embedded
     val bankAccount: SellerBankAccount,
 ) : BaseEntity() {
     @Enumerated(EnumType.STRING)

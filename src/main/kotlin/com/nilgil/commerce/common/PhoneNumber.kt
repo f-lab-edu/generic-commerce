@@ -1,9 +1,11 @@
 package com.nilgil.commerce.common
 
+import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
 
 @Embeddable
 data class PhoneNumber(
+    @Column(name = "phone_number")
     val value: String,
 ) {
     companion object {

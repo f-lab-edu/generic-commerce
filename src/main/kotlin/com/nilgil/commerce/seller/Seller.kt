@@ -3,14 +3,18 @@ package com.nilgil.commerce.seller
 import com.nilgil.commerce.common.BaseEntity
 import com.nilgil.commerce.common.Email
 import com.nilgil.commerce.common.PhoneNumber
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
 @Entity
 class Seller(
+    @Embedded
     var businessInfo: SellerBusinessInfo,
+    @Embedded
     var contactInfo: SellerContactInfo,
+    @Embedded
     var bankAccount: SellerBankAccount,
     var introduction: String?,
     var brandLogo: String?,
@@ -34,8 +38,8 @@ class Seller(
         this.status = SellerStatus.ACTIVE
     }
 
-    fun changeBusinessInfo(businessInfo: SellerBusinessInfo) {
-        this.businessInfo = businessInfo
+    fun changeBusinessInfo(sellerBusinessInfo: SellerBusinessInfo) {
+        this.businessInfo = sellerBusinessInfo
     }
 
     fun changeContactInfo(contactInfo: SellerContactInfo) {

@@ -5,11 +5,16 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 data class SellerBusinessInfo(
-    val businessName: String,
-    @Column(unique = true)
+    @Column(name = "business_name")
+    val name: String,
+    @Column(name = "business_type")
+    val type: String,
+    @Column(name = "business_category")
+    val category: String,
+    @Column(name = "business_address")
+    val address: String,
+    @Column(name = "business_registration_number")
     val registrationNumber: String,
+    @Column(name = "business_registration_certificate")
     val registrationCertificate: String,
-    val businessType: String,
-    val businessCategory: String,
-    val businessAddress: String,
 )
