@@ -11,9 +11,8 @@ class OrderLine(
     @Embedded
     val item: OrderItem,
     val quantity: Int,
-    val price: Int,
     @ManyToOne(fetch = FetchType.LAZY)
     val order: Order,
 ) : BaseEntity() {
-    fun getTotalPrice(): Int = price * quantity
+    fun getTotalPrice(): Int = item.price * quantity
 }

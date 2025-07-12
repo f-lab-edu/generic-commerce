@@ -9,6 +9,8 @@ data class OrderItem(
     val title: String,
     @Column(name = "item_options")
     val options: String,
+    @Column(name = "item_price")
+    val price: Int,
     @Column(name = "item_thumbnail_image_url")
     val thumbnailImageUrl: String?,
     @Column(name = "product_item_id")
