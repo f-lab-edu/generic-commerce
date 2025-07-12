@@ -15,9 +15,12 @@ on:
 jobs:
   link-issue:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
 
     steps:
-      # ✅ 레포를 체크아웃해서 .git 디렉토리 확보
+      # 레포를 체크아웃해서 .git 디렉토리 확보
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -32,34 +35,63 @@ jobs:
 
       # PR 브랜치명 가져오기
       - name: Get PR branch name
-        id: get-branch
         run: |
           echo "Fetching branch name for PR #${{ env.pr_number }}"
-          branch=$(gh pr view ${{ env.pr_number }} --json headRefName -q .headRefName)
-          echo "Branch name: $branch"
-          echo "branch=$branch" >> $GITHUB_ENV
+          branch_name=$(gh pr view ${{ env.pr_number }} --json headRefName --jq .headRefName)
+          echo "Branch name is: $branch_name"
+          echo "branch_name=$branch_name" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 브랜치명에서 이슈 번호 추출
       - name: Extract issue number from branch name
-        id: extract
         run: |
-          echo "Extracting issue number from branch: $branch"
-          if [[ "$branch" =~ ^[a-zA-Z]+/([0-9]+) ]]; then
-            echo "issue_number=${BASH_REMATCH[1]}" >> $GITHUB_ENV
-            echo "Found issue number: ${BASH_REMATCH[1]}"
+          echo "Extracting issue number from branch: ${{ env.branch_name }}"
+          # 브랜치 형식이 'feature/123-description' 또는 'fix/456' 같은 형태일 때 숫자 부분을 추출합니다.
+          if [[ "${{ env.branch_name }}" =~ ^[a-zA-Z]+-?\/([0-9]+) ]]; then
+            issue_number="${BASH_REMATCH[1]}"
+            echo "issue_number=$issue_number" >> $GITHUB_ENV
+            echo "Found issue number: $issue_number"
           else
             echo "No issue number found in branch name. Skipping."
             exit 0
           fi
 
-      # 🔷 PR에 코멘트 남기기
-      - name: Comment on PR with issue link
-        if: env.issue_number != ''
-        uses: peter-evans/create-or-update-comment@v3
+      # PR 설명에 "Closes" 구문 추가
+      - name: Update PR Description
+        if: env.issue_number
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ env.pr_number }}
-          body: |
-            Closes: #${{ env.issue_number }}
+          script: |
+            // 이전 스텝에서 환경 변수로 저장한 값들을 가져옵니다.
+            const issueNumber = process.env.issue_number;
+            const prNumber = parseInt(process.env.pr_number, 10);
+
+            // 현재 PR 정보를 가져옵니다.
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            const currentBody = pullRequest.body || '';
+            const closingStatement = `Closes #${issueNumber}`;
+
+            // 이미 Closes 구문이 포함되어 있다면 중복 추가하지 않고 종료합니다.
+            if (currentBody.includes(closingStatement)) {
+              console.log(`PR description already contains "${closingStatement}".`);
+              return;
+            }
+
+            // 새로운 PR 설명을 생성합니다 (Closes 구문을 맨 위에 추가).
+            const newBody = `${closingStatement}\n\n${currentBody}`;
+
+            // PR 설명을 업데이트합니다.
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              body: newBody
+            });
+
+            console.log(`Successfully updated PR #${prNumber} description with "${closingStatement}".`);
