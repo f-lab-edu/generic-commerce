@@ -11,11 +11,15 @@ data class OrderItem(
     val title: String,
     @Convert(converter = StringListConverter::class)
     @Column(name = "item_options")
-    val options: List<String>,
+    val options: List<String> = listOf(),
     @Column(name = "item_price")
     val price: Int,
     @Column(name = "item_thumbnail_image_url")
-    val thumbnailImageUrl: String?,
+    val thumbnailImageUrl: String? = null,
     @Column(name = "product_item_id")
     val productItemId: Long,
-)
+) {
+    init {
+        require(price >= 0) { "가격은 0 이상이어야 합니다." }
+    }
+}
