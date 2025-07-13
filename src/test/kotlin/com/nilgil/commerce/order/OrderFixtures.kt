@@ -3,6 +3,17 @@ package com.nilgil.commerce.order
 import org.mockito.Mockito.mock
 
 object OrderFixtures {
+    fun anOrder(
+        code: String = "TEST-ORDER-CODE-12345",
+        totalAmount: Int = 0,
+        userId: Long = 1L,
+    ): Order =
+        Order(
+            code = code,
+            totalAmount = totalAmount,
+            userId = userId,
+        )
+
     fun anOrderLine(
         order: Order = mock(Order::class.java),
         quantity: Int = 1,
