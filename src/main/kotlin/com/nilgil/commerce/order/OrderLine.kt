@@ -14,5 +14,9 @@ class OrderLine(
     @ManyToOne(fetch = FetchType.LAZY)
     val order: Order,
 ) : BaseEntity() {
+    init {
+        require(quantity >= 1) { "수량은 1개 이상이어야 합니다." }
+    }
+
     fun getTotalPrice(): Int = item.price * quantity
 }

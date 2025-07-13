@@ -1,6 +1,19 @@
 package com.nilgil.commerce.order
 
+import org.mockito.Mockito.mock
+
 object OrderFixtures {
+    fun anOrderLine(
+        order: Order = mock(Order::class.java),
+        quantity: Int = 1,
+        item: OrderItem = anOrderItem(),
+    ): OrderLine =
+        OrderLine(
+            order = order,
+            quantity = quantity,
+            item = item,
+        )
+
     fun anOrderItem(
         title: String = "테스트 상품",
         options: List<String> = listOf("옵션1", "옵션2"),
