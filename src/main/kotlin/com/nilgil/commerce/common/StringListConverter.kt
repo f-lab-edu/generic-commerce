@@ -5,7 +5,21 @@ import jakarta.persistence.Converter
 
 @Converter
 class StringListConverter : AttributeConverter<List<String>, String> {
-    override fun convertToDatabaseColumn(attribute: List<String>?): String? = attribute?.joinToString(",")
+    companion object {
+        const val DELIMITER = ","
+    }
 
-    override fun convertToEntityAttribute(dbData: String?): List<String>? = dbData?.split(",")?.map { it.trim() } ?: emptyList()
+    override fun convertToDatabaseColumn(attribute: List<String>?): String? {
+        if (attribute.isNullOrEmpty()) {
+            return null
+        }
+        return attribute.joinToString(DELIMITER)
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): List<String> {
+        if (dbData.isNullOrBlank()) {
+            return emptyList()
+        }
+        return dbData.split(DELIMITER).map { it.trim() }
+    }
 }
