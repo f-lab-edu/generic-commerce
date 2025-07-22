@@ -5,32 +5,32 @@ import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class OrderLineTest {
     @Nested
     @DisplayName("객체 생성 시")
     inner class DescribeCreation {
-        @Test
-        fun `수량이 0 또는 음수이면 IllegalArgumentException이 발생한다`() {
-            // when & then
+        @CsvSource("0", "-1", Integer.MIN_VALUE.toString())
+        @ParameterizedTest
+        fun `수량이 0 또는 음수이면 IllegalArgumentException이 발생한다`(quantity: Int) {
+            // when, then
             assertThatIllegalArgumentException()
                 .isThrownBy {
-                    OrderFixtures.anOrderLine(quantity = 0)
-                }
-            assertThatIllegalArgumentException()
-                .isThrownBy {
-                    OrderFixtures.anOrderLine(quantity = -1)
+                    OrderFixtures.anOrderLine(quantity = quantity)
                 }
         }
 
-        @Test
-        fun `수량이 양수이면 정상적으로 생성된다`() {
+        @CsvSource("1", Integer.MAX_VALUE.toString())
+        @ParameterizedTest
+        fun `수량이 양수이면 정상적으로 생성된다`(quantity: Int) {
             // when
-            val orderLine = OrderFixtures.anOrderLine(quantity = 1)
+            val orderLine = OrderFixtures.anOrderLine(quantity = quantity)
 
             // then
             assertThat(orderLine).isNotNull
-            assertThat(orderLine.quantity).isEqualTo(1)
+            assertThat(orderLine.quantity).isEqualTo(quantity)
         }
     }
 
