@@ -1,0 +1,8 @@
+erDiagram
+    Order {
+    %% 고객의 주문 단위
+    }
+    OrderLine {
+    %% 주문에 포함된 개별 주문 항목
+    }
+    Order ||--o{ OrderLine: "주문 - 주문 항목 (1:N)"
