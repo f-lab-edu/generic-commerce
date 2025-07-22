@@ -40,14 +40,17 @@ class OrderLineTest {
         @Test
         fun `아이템 가격과 수량을 곱한 총액을 반환한다`() {
             // given
-            val item = OrderFixtures.anOrderItem(price = 15000)
-            val orderLine = OrderFixtures.anOrderLine(item = item, quantity = 3)
+            val price = 15000
+            val item = OrderFixtures.anOrderItem(price = price)
+
+            val quantity = 3
+            val orderLine = OrderFixtures.anOrderLine(item = item, quantity = quantity)
 
             // when
             val totalPrice = orderLine.getTotalPrice()
 
             // then
-            assertThat(totalPrice).isEqualTo(45000)
+            assertThat(totalPrice).isEqualTo(price * quantity)
         }
     }
 }
