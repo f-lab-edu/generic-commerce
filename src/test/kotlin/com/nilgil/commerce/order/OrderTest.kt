@@ -8,6 +8,19 @@ import org.junit.jupiter.api.Test
 
 class OrderTest {
     @Nested
+    @DisplayName("주문 생성 시")
+    inner class DescribeCreation {
+        @Test
+        fun `CREATED 상태로 생성된다`() {
+            // given, when
+            val order = OrderFixtures.anOrder()
+
+            // then
+            assertThat(order.status).isEqualTo(OrderStatus.CREATED)
+        }
+    }
+
+    @Nested
     @DisplayName("결제 처리 시")
     inner class DescribePay {
         @Test
@@ -39,7 +52,7 @@ class OrderTest {
     @DisplayName("완료 처리 시")
     inner class DescribeComplete {
         @Test
-        fun `PAID 상태이면 COMPLETED로 정상 변경한다`() {
+        fun `PAID 상태이면 COMPLETED로 정상 변경된다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(100L)
@@ -66,8 +79,8 @@ class OrderTest {
     @DisplayName("취소 처리 시")
     inner class DescribeCancel {
         @Test
-        fun `CREATED 또는 PAID 상태이면 CANCELLED로 정상 변경된다`() {
-            // given: 1. CREATED 상태
+        fun `CREATED 상태이면 CANCELLED로 정상 변경된다`() {
+            // given
             val createdOrder = OrderFixtures.anOrder()
 
             // when
@@ -75,8 +88,11 @@ class OrderTest {
 
             // then
             assertThat(createdOrder.status).isEqualTo(OrderStatus.CANCELLED)
+        }
 
-            // given: 2. PAID 상태
+        @Test
+        fun `PAID 상태이면 CANCELLED로 정상 변경된다`() {
+            // given
             val paidOrder = OrderFixtures.anOrder()
             paidOrder.pay(123L)
 
@@ -88,11 +104,25 @@ class OrderTest {
         }
 
         @Test
-        fun `CREATED 또는 PAID 상태가 아니면 IllegalStateException이 발생한다`() {
+        fun `COMPLETED 상태이면 IllegalStateException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(123L)
             order.complete()
+
+            // when, then
+            assertThatThrownBy { order.cancel() }
+                .isInstanceOf(IllegalStateException::class.java)
+                .hasMessage("취소할 수 없는 상태입니다.")
+        }
+
+        @Test
+        fun `RETURNED 상태이면 IllegalStateException이 발생한다`() {
+            // given
+            val order = OrderFixtures.anOrder()
+            order.pay(123L)
+            order.complete()
+            order.returnOrder()
 
             // when, then
             assertThatThrownBy { order.cancel() }
