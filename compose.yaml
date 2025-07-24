@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=gcm'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=nilgil'
+      - 'MYSQL_PASSWORD=secret'
+    ports:
+      - '3306:3306'
