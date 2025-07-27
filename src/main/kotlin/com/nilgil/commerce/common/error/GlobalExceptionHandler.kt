@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.logging.LogLevel
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -32,6 +33,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalStateException(e: Exception): ResponseEntity<ErrorResponse> =
         handleCoreException(CoreException(type = CoreError.CONFLICT_ERROR, cause = e))
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun handleMissingServletRequestParameterException(e: Exception): ResponseEntity<ErrorResponse> =
+        handleCoreException(CoreException(type = CoreError.VALIDATION_ERROR, cause = e))
 }
 
 private fun Logger.logOnLevel(
