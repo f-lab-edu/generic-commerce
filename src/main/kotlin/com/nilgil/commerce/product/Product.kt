@@ -9,7 +9,7 @@ class Product(
     var name: String,
     var description: String?,
     var basePrice: Int,
-    var isActive: Boolean,
+    var active: Boolean,
     val sellerId: Long,
     override val position: Int,
 ) : BaseEntity(),
@@ -36,10 +36,10 @@ class Product(
     }
 
     fun activate() {
-        this.isActive = true
+        this.active = true
     }
 
     fun deactivate() {
-        this.isActive = false
+        this.active = false
     }
 }

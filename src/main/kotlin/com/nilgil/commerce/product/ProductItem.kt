@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne
 class ProductItem(
     var priceAdjustment: Int,
     var stock: Int,
-    var isActive: Boolean,
+    var active: Boolean,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val product: Product,
@@ -46,10 +46,10 @@ class ProductItem(
     }
 
     fun activate() {
-        this.isActive = true
+        this.active = true
     }
 
     fun deactivate() {
-        this.isActive = false
+        this.active = false
     }
 }

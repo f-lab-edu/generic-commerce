@@ -147,28 +147,28 @@ class ProductItemTest :
                 }
 
                 context("activate") {
-                    it("isActive 상태를 true로 변경한다") {
+                    it("active 상태를 true로 변경한다") {
                         // given
-                        val productItem = fixture.createProductItem(isActive = false)
+                        val productItem = fixture.createProductItem(active = false)
 
                         // when
                         productItem.activate()
 
                         // then
-                        productItem.isActive shouldBe true
+                        productItem.active shouldBe true
                     }
                 }
 
                 context("deactivate") {
-                    it("isActive 상태를 false로 변경한다") {
+                    it("active 상태를 false로 변경한다") {
                         // given
-                        val productItem = fixture.createProductItem(isActive = true)
+                        val productItem = fixture.createProductItem(active = true)
 
                         // when
                         productItem.deactivate()
 
                         // then
-                        productItem.isActive shouldBe false
+                        productItem.active shouldBe false
                     }
                 }
             }
