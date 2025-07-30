@@ -22,15 +22,25 @@ class OrderLineTest {
                 }
         }
 
-        @CsvSource("1", Integer.MAX_VALUE.toString())
+        @CsvSource("1", "50", "100")
         @ParameterizedTest
-        fun `수량이 양수이면 정상적으로 생성된다`(quantity: Int) {
+        fun `수량이 1 이상 100 이하이면 정상적으로 생성된다`(quantity: Int) {
             // when
             val orderLine = OrderFixtures.anOrderLine(quantity = quantity)
 
             // then
             assertThat(orderLine).isNotNull
             assertThat(orderLine.quantity).isEqualTo(quantity)
+        }
+
+        @CsvSource("101", Integer.MAX_VALUE.toString())
+        @ParameterizedTest
+        fun `수량이 100 초과이면 IllegalArgumentException이 발생한다`(quantity: Int) {
+            // when, then
+            assertThatIllegalArgumentException()
+                .isThrownBy {
+                    OrderFixtures.anOrderLine(quantity = quantity)
+                }
         }
     }
 
@@ -47,7 +57,7 @@ class OrderLineTest {
             val orderLine = OrderFixtures.anOrderLine(item = item, quantity = quantity)
 
             // when
-            val totalPrice = orderLine.getTotalPrice()
+            val totalPrice = orderLine.totalPrice
 
             // then
             assertThat(totalPrice).isEqualTo(price * quantity)

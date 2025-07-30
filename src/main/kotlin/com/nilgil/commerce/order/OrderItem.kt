@@ -1,6 +1,5 @@
 package com.nilgil.commerce.order
 
-import com.nilgil.commerce.common.StringListConverter
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Embeddable
@@ -9,9 +8,9 @@ import jakarta.persistence.Embeddable
 data class OrderItem(
     @Column(name = "item_title")
     val title: String,
-    @Convert(converter = StringListConverter::class)
+    @Convert(converter = OrderItemOptionMapConverter::class)
     @Column(name = "item_options")
-    val options: List<String> = listOf(),
+    val options: Map<String, String> = emptyMap(),
     @Column(name = "item_price")
     val price: Int,
     @Column(name = "item_thumbnail_image_url")
