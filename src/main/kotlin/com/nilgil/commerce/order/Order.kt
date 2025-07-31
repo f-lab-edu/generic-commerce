@@ -1,6 +1,7 @@
 package com.nilgil.commerce.order
 
 import com.nilgil.commerce.common.BaseEntity
+import com.nilgil.commerce.common.error.CoreException
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -22,7 +23,10 @@ class Order(
 
     fun pay(paymentId: Long) {
         if (this.status != OrderStatus.CREATED) {
-            throw IllegalStateException("결제를 진행할 수 없는 상태입니다.")
+            throw CoreException(
+                type = OrderError.INVALID_STATUS_TRANSITION,
+                detail = "결제를 진행할 수 없는 상태입니다.",
+            )
         }
         this.paymentId = paymentId
         this.status = OrderStatus.PAID
@@ -30,21 +34,30 @@ class Order(
 
     fun complete() {
         if (this.status != OrderStatus.PAID) {
-            throw IllegalStateException("완료 처리할 수 없는 상태입니다.")
+            throw CoreException(
+                type = OrderError.INVALID_STATUS_TRANSITION,
+                detail = "완료 처리할 수 없는 상태입니다.",
+            )
         }
         this.status = OrderStatus.COMPLETED
     }
 
     fun cancel() {
         if (this.status != OrderStatus.CREATED && this.status != OrderStatus.PAID) {
-            throw IllegalStateException("취소할 수 없는 상태입니다.")
+            throw CoreException(
+                type = OrderError.INVALID_STATUS_TRANSITION,
+                detail = "취소할 수 없는 상태입니다.",
+            )
         }
         this.status = OrderStatus.CANCELLED
     }
 
     fun returnOrder() {
         if (this.status != OrderStatus.COMPLETED) {
-            throw IllegalStateException("반품할 수 없는 상태입니다.")
+            throw CoreException(
+                type = OrderError.INVALID_STATUS_TRANSITION,
+                detail = "반품할 수 없는 상태입니다.",
+            )
         }
         this.status = OrderStatus.RETURNED
     }

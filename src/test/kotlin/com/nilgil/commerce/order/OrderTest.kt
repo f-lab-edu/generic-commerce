@@ -1,5 +1,6 @@
 package com.nilgil.commerce.order
 
+import com.nilgil.commerce.common.error.CoreException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
@@ -37,14 +38,17 @@ class OrderTest {
         }
 
         @Test
-        fun `CREATED 상태가 아니면 IllegalStateException이 발생한다`() {
+        fun `CREATED 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(paymentId = 123L)
 
             // when, then
             assertThatThrownBy { order.pay(paymentId = 456L) }
-                .isInstanceOf(IllegalStateException::class.java)
+                .isInstanceOf(CoreException::class.java)
+                .extracting { it as CoreException }
+                .extracting(CoreException::type)
+                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
         }
     }
 
@@ -65,13 +69,16 @@ class OrderTest {
         }
 
         @Test
-        fun `PAID 상태가 아니면 IllegalStateException이 발생한다`() {
+        fun `PAID 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
 
             // when, then
             assertThatThrownBy { order.complete() }
-                .isInstanceOf(IllegalStateException::class.java)
+                .isInstanceOf(CoreException::class.java)
+                .extracting { it as CoreException }
+                .extracting(CoreException::type)
+                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
         }
     }
 
@@ -104,7 +111,7 @@ class OrderTest {
         }
 
         @Test
-        fun `COMPLETED 상태이면 IllegalStateException이 발생한다`() {
+        fun `COMPLETED 상태이면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(123L)
@@ -112,12 +119,14 @@ class OrderTest {
 
             // when, then
             assertThatThrownBy { order.cancel() }
-                .isInstanceOf(IllegalStateException::class.java)
-                .hasMessage("취소할 수 없는 상태입니다.")
+                .isInstanceOf(CoreException::class.java)
+                .extracting { it as CoreException }
+                .extracting(CoreException::type)
+                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
         }
 
         @Test
-        fun `RETURNED 상태이면 IllegalStateException이 발생한다`() {
+        fun `RETURNED 상태이면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(123L)
@@ -126,8 +135,10 @@ class OrderTest {
 
             // when, then
             assertThatThrownBy { order.cancel() }
-                .isInstanceOf(IllegalStateException::class.java)
-                .hasMessage("취소할 수 없는 상태입니다.")
+                .isInstanceOf(CoreException::class.java)
+                .extracting { it as CoreException }
+                .extracting(CoreException::type)
+                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
         }
     }
 
@@ -149,14 +160,16 @@ class OrderTest {
         }
 
         @Test
-        fun `COMPLETED 상태가 아니면 IllegalStateException이 발생한다`() {
+        fun `COMPLETED 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
 
             // when, then
             assertThatThrownBy { order.returnOrder() }
-                .isInstanceOf(IllegalStateException::class.java)
-                .hasMessage("반품할 수 없는 상태입니다.")
+                .isInstanceOf(CoreException::class.java)
+                .extracting { it as CoreException }
+                .extracting(CoreException::type)
+                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
         }
     }
 }
