@@ -1,2 +1,14 @@
 spring:
   application.name: generic-commerce
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+  sql.init.mode: always
+  docker.compose.lifecycle-management: start_only

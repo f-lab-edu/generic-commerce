@@ -1,3 +1,5 @@
+.env
+data.sql
 application.properties
 HELP.md
 .gradle
