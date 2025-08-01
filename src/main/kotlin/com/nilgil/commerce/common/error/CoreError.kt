@@ -13,4 +13,5 @@ enum class CoreError(
     AUTHORIZATION_ERROR(HttpStatus.FORBIDDEN, "C004", "접근 권한이 없습니다."),
     NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C005", "리소스를 찾을 수 없습니다."),
     CONFLICT_ERROR(HttpStatus.CONFLICT, "C006", "충돌되는 리소스가 존재합니다."),
+    FAIL_TO_GET_LOCK(HttpStatus.CONFLICT, "C007", "락을 휙득하는데 실패했습니다."),
 }
