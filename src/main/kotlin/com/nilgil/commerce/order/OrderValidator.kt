@@ -1,7 +1,6 @@
 package com.nilgil.commerce.order
 
 import com.nilgil.commerce.common.error.CoreException
-import com.nilgil.commerce.product.ProductItemResponse
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,13 +15,15 @@ class OrderValidator(
         }
     }
 
-    fun validateItems(
+    fun validateOrderItems(
         request: CreateOrderRequest,
-        itemsMap: Map<Long, ProductItemResponse>,
+        productItems: List<ProductItemInfo>,
     ) {
+        val itemInfoMap = productItems.associateBy { it.productItemId }
+
         val invalidItems =
-            request.lines.mapNotNull { line ->
-                checkAndGetInvalid(line, itemsMap)
+            request.lines.mapNotNull { lineRequest ->
+                getInvalidOrNull(lineRequest, itemInfoMap)
             }
 
         if (invalidItems.isNotEmpty()) {
@@ -30,16 +31,16 @@ class OrderValidator(
         }
     }
 
-    private fun checkAndGetInvalid(
+    private fun getInvalidOrNull(
         line: CreateOrderLineRequest,
-        itemsMap: Map<Long, ProductItemResponse>,
+        itemsMap: Map<Long, ProductItemInfo>,
     ): InvalidLineInfo? {
         val item = itemsMap[line.productItemId]
         return when {
             item == null ->
                 InvalidLineInfo(line.productItemId, InvalidType.NOT_FOUND)
 
-            line.quantity > item.stock ->
+            item.stock < line.quantity ->
                 InvalidLineInfo(line.productItemId, InvalidType.STOCK_NOT_ENOUGH)
 
             else -> null

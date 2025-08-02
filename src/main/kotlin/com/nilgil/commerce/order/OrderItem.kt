@@ -18,6 +18,17 @@ data class OrderItem(
     @Column(name = "product_item_id")
     val productItemId: Long,
 ) {
+    companion object {
+        fun from(itemInfo: ProductItemInfo): OrderItem =
+            OrderItem(
+                title = itemInfo.title,
+                options = itemInfo.options,
+                price = itemInfo.price,
+                thumbnailImageUrl = itemInfo.thumbnailImageUrl,
+                productItemId = itemInfo.productItemId,
+            )
+    }
+
     init {
         require(price >= 0) { "가격은 0 이상이어야 합니다." }
     }
