@@ -24,11 +24,11 @@ class OrderFacade(
     }
 
     private fun getProductItems(request: CreateOrderRequest): List<ProductItemInfo> {
-        val itemIds = request.lines.map { it.productItemId }
+        val itemIds = request.lines.map(CreateOrderLineRequest::productItemId)
 
-        return productItemService.getProductItems(itemIds).map {
-            it.toInternalItemInfo()
-        }
+        return productItemService
+            .getProductItems(itemIds)
+            .map(ProductItemResponse::toInternalItemInfo)
     }
 }
 

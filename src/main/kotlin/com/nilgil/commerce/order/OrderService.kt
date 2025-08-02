@@ -31,7 +31,8 @@ class OrderService(
         request: CreateOrderRequest,
         productItems: List<ProductItemInfo>,
     ): List<OrderLine> {
-        val productItemMap = productItems.associateBy { it.productItemId }
+        val productItemMap = productItems.associateBy(ProductItemInfo::productItemId)
+
         return request.lines.map {
             val productItem = productItemMap[it.productItemId]!!
             OrderLine.from(productItem, it.quantity)
