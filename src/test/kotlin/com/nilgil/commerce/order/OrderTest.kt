@@ -1,6 +1,8 @@
 package com.nilgil.commerce.order
 
 import com.nilgil.commerce.common.error.CoreException
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
@@ -18,6 +20,36 @@ class OrderTest {
 
             // then
             assertThat(order.status).isEqualTo(OrderStatus.CREATED)
+        }
+
+        @Test
+        fun `주문 항목에 중복된 상품이 존재하면 IllegalArgumentException이 발생한다`() {
+            // given
+            val productItemId = 1L
+            val duplicateProductItemLines =
+                listOf(
+                    OrderFixtures.anOrderLine(item = OrderFixtures.anOrderItem(productItemId = productItemId)),
+                    OrderFixtures.anOrderLine(item = OrderFixtures.anOrderItem(productItemId = productItemId)),
+                )
+
+            // when, then
+            assertThatThrownBy {
+                OrderFixtures.anOrder(lines = duplicateProductItemLines)
+            }.isInstanceOf(IllegalArgumentException::class.java)
+        }
+
+        @Test
+        fun `주문 총 금액이 0 미만이면 IllegalArgumentException이 발생한다`() {
+            val mockOrderLine = mockk<OrderLine>()
+            val mockItem = mockk<OrderItem>()
+
+            every { mockOrderLine.item } returns mockItem
+            every { mockOrderLine.productItemId } returns 1L
+            every { mockOrderLine.totalPrice } returns -1000
+
+            assertThatThrownBy {
+                OrderFixtures.anOrder(lines = listOf(mockOrderLine))
+            }.isInstanceOf(IllegalArgumentException::class.java)
         }
     }
 
