@@ -26,8 +26,8 @@ class OrderLine(
         get() = item.productItemId
 
     companion object {
-        const val MIN_QUANTITY = 1
-        const val MAX_QUANTITY = 100
+        private const val MIN_QUANTITY = 1
+        private const val MAX_QUANTITY = 100
 
         fun from(
             itemInfo: ProductItemInfo,

@@ -6,7 +6,7 @@ import jakarta.persistence.Converter
 @Converter
 class StringListConverter : AttributeConverter<List<String>, String> {
     companion object {
-        const val DELIMITER = ","
+        private const val DELIMITER = ","
     }
 
     override fun convertToDatabaseColumn(attribute: List<String>?): String? {

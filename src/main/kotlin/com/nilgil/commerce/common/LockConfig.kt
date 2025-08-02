@@ -9,7 +9,7 @@ import org.springframework.integration.support.locks.LockRegistry
 @Configuration
 class LockConfig {
     companion object {
-        const val LOCK_REGISTRY_KEY = "lock"
+        private const val LOCK_REGISTRY_KEY = "lock"
     }
 
     @Bean
