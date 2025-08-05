@@ -1,6 +1,5 @@
 package com.nilgil.commerce.order
 
-import com.nilgil.commerce.common.error.CoreException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
@@ -38,17 +37,18 @@ class OrderTest {
         }
 
         @Test
-        fun `CREATED 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
+        fun `CREATED 상태가 아니면 InvalidStatusTransitionException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(paymentId = 123L)
 
             // when, then
             assertThatThrownBy { order.pay(paymentId = 456L) }
-                .isInstanceOf(CoreException::class.java)
-                .extracting { it as CoreException }
-                .extracting(CoreException::type)
-                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                .isInstanceOfSatisfying(InvalidStatusTransitionException::class.java) { e ->
+                    assertThat(e.errorType).isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                    assertThat(e.current).isEqualTo(OrderStatus.PAID)
+                    assertThat(e.target).isEqualTo(OrderStatus.PAID)
+                }
         }
     }
 
@@ -69,16 +69,17 @@ class OrderTest {
         }
 
         @Test
-        fun `PAID 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
+        fun `PAID 상태가 아니면 InvalidStatusTransitionException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
 
             // when, then
             assertThatThrownBy { order.complete() }
-                .isInstanceOf(CoreException::class.java)
-                .extracting { it as CoreException }
-                .extracting(CoreException::type)
-                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                .isInstanceOfSatisfying(InvalidStatusTransitionException::class.java) { e ->
+                    assertThat(e.errorType).isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                    assertThat(e.current).isEqualTo(OrderStatus.CREATED)
+                    assertThat(e.target).isEqualTo(OrderStatus.COMPLETED)
+                }
         }
     }
 
@@ -111,7 +112,7 @@ class OrderTest {
         }
 
         @Test
-        fun `COMPLETED 상태이면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
+        fun `COMPLETED 상태이면 InvalidStatusTransitionException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(123L)
@@ -119,14 +120,15 @@ class OrderTest {
 
             // when, then
             assertThatThrownBy { order.cancel() }
-                .isInstanceOf(CoreException::class.java)
-                .extracting { it as CoreException }
-                .extracting(CoreException::type)
-                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                .isInstanceOfSatisfying(InvalidStatusTransitionException::class.java) { e ->
+                    assertThat(e.errorType).isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                    assertThat(e.current).isEqualTo(OrderStatus.COMPLETED)
+                    assertThat(e.target).isEqualTo(OrderStatus.CANCELLED)
+                }
         }
 
         @Test
-        fun `RETURNED 상태이면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
+        fun `RETURNED 상태이면 InvalidStatusTransitionException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
             order.pay(123L)
@@ -135,10 +137,11 @@ class OrderTest {
 
             // when, then
             assertThatThrownBy { order.cancel() }
-                .isInstanceOf(CoreException::class.java)
-                .extracting { it as CoreException }
-                .extracting(CoreException::type)
-                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                .isInstanceOfSatisfying(InvalidStatusTransitionException::class.java) { e ->
+                    assertThat(e.errorType).isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                    assertThat(e.current).isEqualTo(OrderStatus.RETURNED)
+                    assertThat(e.target).isEqualTo(OrderStatus.CANCELLED)
+                }
         }
     }
 
@@ -160,16 +163,17 @@ class OrderTest {
         }
 
         @Test
-        fun `COMPLETED 상태가 아니면 INVALID_STATUS_TRANSITION 에러가 발생한다`() {
+        fun `COMPLETED 상태가 아니면 InvalidStatusTransitionException이 발생한다`() {
             // given
             val order = OrderFixtures.anOrder()
 
             // when, then
             assertThatThrownBy { order.returnOrder() }
-                .isInstanceOf(CoreException::class.java)
-                .extracting { it as CoreException }
-                .extracting(CoreException::type)
-                .isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                .isInstanceOfSatisfying(InvalidStatusTransitionException::class.java) { e ->
+                    assertThat(e.errorType).isEqualTo(OrderError.INVALID_STATUS_TRANSITION)
+                    assertThat(e.current).isEqualTo(OrderStatus.CREATED)
+                    assertThat(e.target).isEqualTo(OrderStatus.RETURNED)
+                }
         }
     }
 }
