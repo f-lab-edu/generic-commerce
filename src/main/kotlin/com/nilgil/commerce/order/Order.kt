@@ -22,7 +22,7 @@ class Order(
 
     fun pay(paymentId: Long) {
         if (this.status != OrderStatus.CREATED) {
-            throw IllegalStateException("결제를 진행할 수 없는 상태입니다.")
+            throw InvalidStatusTransitionException(this.status, OrderStatus.PAID)
         }
         this.paymentId = paymentId
         this.status = OrderStatus.PAID
@@ -30,21 +30,21 @@ class Order(
 
     fun complete() {
         if (this.status != OrderStatus.PAID) {
-            throw IllegalStateException("완료 처리할 수 없는 상태입니다.")
+            throw InvalidStatusTransitionException(this.status, OrderStatus.COMPLETED)
         }
         this.status = OrderStatus.COMPLETED
     }
 
     fun cancel() {
         if (this.status != OrderStatus.CREATED && this.status != OrderStatus.PAID) {
-            throw IllegalStateException("취소할 수 없는 상태입니다.")
+            throw InvalidStatusTransitionException(this.status, OrderStatus.CANCELLED)
         }
         this.status = OrderStatus.CANCELLED
     }
 
     fun returnOrder() {
         if (this.status != OrderStatus.COMPLETED) {
-            throw IllegalStateException("반품할 수 없는 상태입니다.")
+            throw InvalidStatusTransitionException(this.status, OrderStatus.RETURNED)
         }
         this.status = OrderStatus.RETURNED
     }
